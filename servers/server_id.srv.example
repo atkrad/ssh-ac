@@ -1,0 +1,4 @@
+TITLE="Test Server"
+IP=127.0.0.1
+PORT=22
+USER=root
