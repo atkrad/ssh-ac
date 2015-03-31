@@ -1,2 +1,4 @@
+servers/*.srv
 !servers/*.srv.example
+users/*.usr
 !users/*.usr.example
