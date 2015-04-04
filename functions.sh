@@ -11,15 +11,6 @@ inArray() {
     return 1
 }
 
-getServers() {
-    ls -A ${SERVERS_DIR}/*.srv 2>&1 /dev/null
-    if [ "$?" == "0" ]; then
-        return `ls -A ${SERVERS_DIR}/*.srv 2>/dev/null`
-    else
-        exit 1
-    fi
-}
-
 colorizePrint() {
     local RED="\033[0;31m"
     local GREEN="\033[0;32m"

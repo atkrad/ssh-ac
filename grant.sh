@@ -35,9 +35,9 @@ if [ ! -r "$IDENTITY_FILE" ]; then
     exit 1
 fi
 
-PUB_KEYS=`cat ${IDENTITY_FILE}`\\\\n
+SERVERS=$(ls -A ${SERVERS_DIR}/*.srv 2> /dev/null) || $(colorizePrint "Server not found.\n" RED; exit 1)
 
-SERVERS=`getServers` || colorizePrint "Server not found.\n" RED; exit 1
+# Iterate in all servers
 for SERVER in ${SERVERS}
 do
 	source ${SERVER};
@@ -61,21 +61,26 @@ do
         SERVER_HOME=/home/${SERVER_USER}
     fi
 
+    PUB_KEYS=`cat ${IDENTITY_FILE}`\\\\\\\\n
+
+    # Iterate in all users
     for USER in `ls -A ${USERS_DIR}/*.usr`
     do
         source ${USER};
         GRANT_SERVERS_ID=${GRANT_SERVERS_ID[@]:-$('')}
+
+        # Set default value when not defined "PUBLIC_KEYS"
         PUBLIC_KEYS=${PUBLIC_KEYS[@]:-$('')}
 
         # If access to this server
         if inArray GRANT_SERVERS_ID ${SERVER_ID}; then
-            for PUB_KEY in ${PUBLIC_KEYS}
+            for ((i = 0; i < ${#PUBLIC_KEYS[@]}; i++))
             do
-                PUB_KEYS+=${PUB_KEY}\\\\n
+                PUB_KEYS+="${PUBLIC_KEYS[$i]}\\\\\\\\n"
             done
         fi
     done
 
-    colorizePrint "Connecting to '$SERVER_TITLE' ...\n"
-    ${SSH_COMMAND} ${SERVER_USER}@${SERVER_IP} -p${SERVER_PORT} "cp $SERVER_HOME/.ssh/authorized_keys $SERVER_HOME/.ssh/authorized_keys.bak && echo -e $PUB_KEYS > $SERVER_HOME/.ssh/authorized_keys"
+    colorizePrint "Connecting to '$SERVER_TITLE' ..." GREEN
+    ${SSH_COMMAND} ${SERVER_USER}@${SERVER_IP} -p${SERVER_PORT} "bash -c \"cp $SERVER_HOME/.ssh/authorized_keys $SERVER_HOME/.ssh/authorized_keys.bak && echo -e $PUB_KEYS > $SERVER_HOME/.ssh/authorized_keys\""
 done
