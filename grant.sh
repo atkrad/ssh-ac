@@ -70,7 +70,7 @@ do
         source ${USER};
         USER_FILENAME=$(basename "$USER")
         USER_ID="${USER_FILENAME%.*}"
-        USER_TITLE=${TITLE:-$USER_ID}
+        USER_TITLE=${USER_TITLE:-$USER_ID}
         GRANT_SERVERS_ID=${GRANT_SERVERS_ID[@]:-$('')}
 
         # Set default value when not defined "PUBLIC_KEYS"
