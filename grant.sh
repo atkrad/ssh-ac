@@ -20,24 +20,25 @@ while getopts ":i:h" OPT; do
         exit 0
         ;;
     \?)
-        echo "Invalid option: -$OPTARG, Please use help option -h" >&2
+        colorizePrint "Invalid option: -$OPTARG, Please use help option -h\n" RED
         exit 1
         ;;
     :)
-      echo "Option -$OPTARG requires an argument." >&2
-      exit 1
-      ;;
+        colorizePrint "Option -$OPTARG requires an argument.\n" RED
+        exit 1
+        ;;
     esac
 done
 
 if [ ! -r "$IDENTITY_FILE" ]; then
-    echo "Identity file '$IDENTITY_FILE' does not exist or readable."
+    colorizePrint "Identity file '$IDENTITY_FILE' does not exist or readable.\n" RED
     exit 1
 fi
 
 PUB_KEYS=`cat ${IDENTITY_FILE}`\\\\n
 
-for SERVER in `ls -A ${SERVERS_DIR}/*.srv`
+SERVERS=`getServers` || colorizePrint "Server not found.\n" RED; exit 1
+for SERVER in ${SERVERS}
 do
 	source ${SERVER};
 	FILENAME=$(basename "$SERVER")
@@ -50,7 +51,7 @@ do
 
     # Show error when server ip not defined
     if [ -z "${SERVER_IP}" ]; then
-        echo "Please define IP for '$SERVER_TITLE' server.";
+        colorizePrint "Please define IP for '$SERVER_TITLE' server.\n" RED
         exit 1
     fi
 
@@ -75,5 +76,6 @@ do
         fi
     done
 
+    colorizePrint "Connecting to '$SERVER_TITLE' ...\n"
     ${SSH_COMMAND} ${SERVER_USER}@${SERVER_IP} -p${SERVER_PORT} "cp $SERVER_HOME/.ssh/authorized_keys $SERVER_HOME/.ssh/authorized_keys.bak && echo -e $PUB_KEYS > $SERVER_HOME/.ssh/authorized_keys"
 done
