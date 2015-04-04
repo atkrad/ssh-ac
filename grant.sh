@@ -41,9 +41,9 @@ SERVERS=$(ls -A ${SERVERS_DIR}/*.srv 2> /dev/null) || $(colorizePrint "Server no
 for SERVER in ${SERVERS}
 do
 	source ${SERVER};
-	FILENAME=$(basename "$SERVER")
+	SERVER_FILENAME=$(basename "$SERVER")
 
-    SERVER_ID="${FILENAME%.*}"
+    SERVER_ID="${SERVER_FILENAME%.*}"
 	SERVER_IP=${IP:-}
     SERVER_PORT=${PORT:-22}
     SERVER_USER=${USER:-root}
@@ -62,11 +62,15 @@ do
     fi
 
     PUB_KEYS=`cat ${IDENTITY_FILE}`\\\\\\\\n
+    GRANT_PRIVILEGE_USERS=''
 
     # Iterate in all users
     for USER in `ls -A ${USERS_DIR}/*.usr`
     do
         source ${USER};
+        USER_FILENAME=$(basename "$USER")
+        USER_ID="${USER_FILENAME%.*}"
+        USER_TITLE=${TITLE:-$USER_ID}
         GRANT_SERVERS_ID=${GRANT_SERVERS_ID[@]:-$('')}
 
         # Set default value when not defined "PUBLIC_KEYS"
@@ -74,6 +78,7 @@ do
 
         # If access to this server
         if inArray GRANT_SERVERS_ID ${SERVER_ID}; then
+            colorizePrint "=> Grant privileges to '$USER_TITLE'" BLUE
             for ((i = 0; i < ${#PUBLIC_KEYS[@]}; i++))
             do
                 PUB_KEYS+="${PUBLIC_KEYS[$i]}\\\\\\\\n"
