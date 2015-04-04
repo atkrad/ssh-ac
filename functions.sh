@@ -19,9 +19,10 @@ colorizePrint() {
     local BLUE="\033[0;34m"
     local YELLOW="\033[0;33m"
     local NORMAL="\033[m"
+    local END="\033[39;49;00m"
 
     local TEXT=${1:-}
     local COLOR=\$${2:-NORMAL}
 
-    echo -e "`eval echo ${COLOR}`$TEXT"
+    echo -e "`eval echo ${COLOR}`$TEXT${END}"
 }
