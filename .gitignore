@@ -1,3 +1,4 @@
+.idea
 servers/*.srv
 !servers/*.srv.example
 users/*.usr
