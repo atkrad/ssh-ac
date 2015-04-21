@@ -71,7 +71,6 @@ do
         USR_FILENAME=$(basename "$USR")
 
         USR_ID="${USR_FILENAME%.*}"
-        USR_TITLE=${USER_TITLE:-$USR_ID}
         GRANT_SERVERS_ID=${GRANT_SERVERS_ID[@]:-$('')}
 
         # Set default value when not defined "PUBLIC_KEYS"
@@ -79,7 +78,7 @@ do
 
         # If access to this server
         if inArray GRANT_SERVERS_ID ${SERVER_ID}; then
-            GRANT_PRIVILEGE_USERS+=$USR_TITLE\\n
+            GRANT_PRIVILEGE_USERS+=${USR_ID}\\n
             for ((i = 0; i < ${#PUBLIC_KEYS[@]}; i++))
             do
                 PUB_KEYS+="${PUBLIC_KEYS[$i]}\\\\\\\\n"
@@ -91,5 +90,5 @@ do
     ${SSH_COMMAND} ${SERVER_USER}@${SERVER_IP} -p${SERVER_PORT} "bash -c \"cp $SERVER_HOME/.ssh/authorized_keys $SERVER_HOME/.ssh/authorized_keys.bak && echo -e $PUB_KEYS > $SERVER_HOME/.ssh/authorized_keys\""
 
     colorizePrint "==> Grant privileges to users:" BLUE
-    colorizePrint ${GRANT_PRIVILEGE_USERS} BLUE
+    colorizePrint "$GRANT_PRIVILEGE_USERS" BLUE
 done
