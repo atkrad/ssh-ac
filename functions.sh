@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Search in array
 inArray() {
     local haystack=${1}[@]
     local needle=${2}
@@ -11,6 +12,7 @@ inArray() {
     return 1
 }
 
+# Colorize print
 colorizePrint() {
     local RED="\033[0;31m"
     local GREEN="\033[0;32m"
